@@ -1,0 +1,46 @@
+xFusionCorp Industries has hosted several static websites on Nautilus Application Servers in Stratos DC. There are some confidential directories on document root that need to be password protected. Because they are using Apache for hosting the websites, the production support team has decided to use .htaccess with basic auth. There is a website that needs to be uploaded to /var/www/html/finance on Nautilus App Server 1. However, we need to set up the authentication before that.
+
+
+Create /var/www/html/finance direcotry if doesn't exist.
+
+Add a user siva in htpasswd and set its password to YchZHRcLkL.
+
+There is a file /tmp/index.html placed on Jump Server. Copy the same to new directory you created, please make sure default document root should remain /var/www/html.
+
+Create /var/www/html/security direcotry if doesn't exist.
+
+Add a user james in htpasswd and set its password to dCV3szSGNA.
+
+There is a file /tmp/index.html placed on Jump Server. Copy the same to new directory you created, please make sure default document root should remain /var/www/html.
+
+
+htpasswd -c /usr/local/etc/.htpasswd siva
+
+
+
+Create .htaccess file and put the below cmd
+
+AuthType Basic
+AuthName "Authentication Required"
+AuthUserFile "/etc/htpasswd/.htpasswd"
+Require valid-user
+
+
+Next create a directory block in httpd.conf file
+
+
+<Directory "/var/www/html/finance">
+  AllowOverride AuthConfig
+  # The Options below is an example. Use what you deem is necessary.
+  Options MultiViews Indexes SymLinksIfOwnerMatch IncludesNoExec
+  Order allow,deny
+  Allow from all
+</Directory>
+
+scp /tmp/index.html /var/www/html/finance/index.html
+systemctl restart httpd
+curl -u siva:YchZHRcLkL http://stapp01:8080/finance/
+YchZHRcLkL
+YchZHRcLkL
+
+

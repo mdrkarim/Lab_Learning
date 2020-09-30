@@ -1,0 +1,53 @@
+The production support team of xFusionCorp Industries is working on developing some bash scripts to automate different day to day tasks. One is to create a bash script for taking websites backup. They have a static website running on App Server 1 in Stratos Datacenter, and they need to create a bash script named ecommerce_backup.sh which should accomplish the following tasks. (Also remember to place the script under /scripts directory on App Server 1)
+
+
+a. Create a zip archive named xfusioncorp_ecommerce.zip of /var/www/html/ecommerce directory.
+
+b. Save the archive in /backup/ on App Server 1. This is a temporary storage, as backups from this location will be clean on weekly basis. Therefore, we also need to save this backup archive on Nautilus Backup Server.
+
+c. Copy the created archive to Nautilus Backup Server server in /backup/ location.
+
+d. Please make sure script won't ask for password while copying the archive file. Additionally, the respective server user (for example, tony in case of App Server 1) must be able to run it.
+
+
+ssh tony@stapp01
+cd /scripts
+vi ecommerce_backup.sh
+****
+zip -r xfusioncorp_ecommerce.zip /var/www/html/ecommerce
+cp xfusioncorp_ecommerce.zip /backup/
+scp xfusioncorp_ecommerce.zip clint@stbkp01:/backup/
+****
+chmod 755 ecommerce_backup.sh
+chmod -R 777 /scripts
+
+Run the following ls command to see if existing SSH keys are present:
+
+ls -al ~/.ssh/id_*.pub
+
+Generate a new SSH key pair.
+ssh-keygen -t rsa
+
+To be sure that the SSH keys are generated you can list your new private and public keys with:
+
+ls ~/.ssh/id_*
+
+to copy your public key to your server
+
+ssh-copy-id clint@stbkp01
+
+
+If by some reason the ssh-copy-id utility is not available on your local computer you can use the following command to copy the public key:
+
+cat ~/.ssh/id_rsa.pub | ssh remote_username@server_ip_address "mkdir -p ~/.ssh && chmod 700 ~/.ssh && cat >> ~/.ssh/authorized_keys && chmod 600 ~/.ssh/authorized_keys"
+
+
+To test it just try to login to your server via SSH:
+
+ssh 'clint@stbkp01
+
+
+
+ssh clint@stbkp01 mkdir -p .ssh
+ssh clint@stbkp01 "chmod 700 .ssh; chmod 640 .ssh/authorized_keys"
+ssh-copy-id clint@stbkp01

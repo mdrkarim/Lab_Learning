@@ -1,0 +1,18 @@
+Our monitoring tool has reported an issue in Stratos Datacenter. One of our app servers has an issue, as its Apache service is not reachable on port 5004 (which is our Apache port). The service itself could be down, the firewall could be at fault, or something else could be causing the issue.
+
+
+Use tools like telnet, netstat, etc. to find and fix the issue. Also make sure Apache is reachable from the jump host without compromising any security settings.
+
+sudo netstat -tulpn| grep :8080
+netstat -plant
+systemctl restart httpd
+systemctl enable httpd
+systemctl status httpd.service -l
+vi /etc/httpd/conf/httpd.conf
+kill -9 processID
+
+sudo iptables -L
+sudo iptables -I INPUT 1 -p tcp --dport 6000 -j ACCEPT
+sudo service iptables save
+
+

@@ -1,0 +1,43 @@
+Some new developers have joined xFusionCorp Industries and have been assigned Nautilus project. They are going to start development on a new application, and some pre-requisites have been shared with the DevOps team to proceed with. Please note that all tasks need to be performed on storage server in Stratos DC.
+
+
+a. Install git, set up any values for user.email and user.name globally and create a bare repository /opt/ecommerce.git.
+
+b. There is an update hook (to block direct pushes to master branch) under /tmp on storage server itself; use the same to block direct pushes to master branch in /opt/ecommerce.git repo.
+
+c. Clone /opt/ecommerce.git repo in /usr/src/kodekloudrepos/ecommerce directory.
+
+d. Create a new branch xfusioncorp_ecommerce in repo that you cloned in /usr/src/kodekloudrepos.
+
+e. There is a readme.md file in /tmp on storage server itself; copy that to repo, add/commit in the new branch you created, and finally push your branch to origin.
+
+f. Also create master branch from your branch and remember you should not be able to push to master as per hook you have set up.
+
+
+ 
+yum install git -y;
+
+git config --global user.name "Md Karim";
+git config --global user.email md.rejaul.karim@outlook.com;
+
+mkdir /opt/beta.git;
+cd /opt/beta.git && git --bare init ;
+cd /tmp;
+cp update /opt/beta.git/hooks && cd /opt/beta.git/hooks;
+git clone /opt/beta.git /usr/src/kodekloudrepos/beta && cd /usr/src/kodekloudrepos/beta;
+git checkout -b xfusioncorp_beta; #Check the name
+
+cd /tmp;
+cp readme.md /usr/src/kodekloudrepos/beta && cd /usr/src/kodekloudrepos/beta
+
+git add readme.md;
+
+git commit -m "New Branch";
+
+git push origin xfusioncorp_beta; #Check the name
+git branch master;
+echo 'ehllo' > test2.txt;
+
+git add test2.txt  ; git commit  -m 'another commit';
+
+git push origin master;

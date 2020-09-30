@@ -1,0 +1,67 @@
+
+Installing NFS Server and NFS Client
+We need to install NFS packages on our NFS Server as well as on NFS Client machine. We can install it via “yum” (Red Hat Linux) 
+and “apt-get” (Debian and Ubuntu) package installers.
+yum install nfs-utils nfs-utils-lib
+yum install portmapy
+ (not required with NFSv4)
+Now start the services on both machines.
+/etc/init.d/portmap start
+/etc/init.d/nfs start
+chkconfig --level 35 portmap on
+chkconfig --level 35 nfs on
+
+systemctl enable rpcbind
+systemctl enable nfs-server
+systemctl enable nfs-lock
+systemctl enable nfs-idmap
+
+systemctl start rpcbind
+systemctl start nfs-server
+systemctl start nfs-lock
+systemctl start nfs-idmap
+
+Setting Up the NFS Server
+First we will be configuring the NFS server.
+
+Configure Export directory
+For sharing a directory with NFS, we need to make an entry in “/etc/exports” configuration file. 
+Here I’ll be creating a new directory named “nfsshare” in “/” partition to share with client server, 
+you can also share an already existing directory with NFS.
+
+vi /etc/exports
+
+/code 172.16.238.10(rw,sync,no_root_squash,no_all_squash)
+/code 172.16.238.11(rw,sync,no_root_squash,no_all_squash)
+/code 172.16.238.12(rw,sync,no_root_squash,no_all_squash)
+
+
+systemctl restart nfs-server
+
+vi /etc/fstab
+
+yum install showmount
+
+mount -t nfs 172.16.238.15:/code /var/www/nfsdata
+vi /etc/fstab
+
+cd ..
+172.16.238.15:/code /var/www/nfsdata nfs defaults 0 0
+showmount -e 172.16.238.15
+
+
+adduser rajesh
+groupadd nautilus_sftp_users
+usermod -a -G  nautilus_sftp_users rajesh
+
+
+
+
+
+
+
+
+
+
+
+

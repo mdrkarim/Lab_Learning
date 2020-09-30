@@ -1,0 +1,4 @@
+sudo useradd kano
+sudo groupadd nautilus_noc
+sudo usermod -a -G nautilus_noc kano
+getent group nautilus_noc

@@ -1,0 +1,110 @@
+The Nautilus DevOps team is planning to setup a Jenkins CI server to create/manage some deployment pipelines for some of the projects. They want to setup the Jenkins server on Kubernetes cluster. Below you can find more details about the task:
+
+
+1) Create namespace jenkins
+
+2) Create a Service for jenkins deployment. Service name should be jenkins-service under jenkins namespace, type should be NodePort, targetport should be 8080 and nodePort should be 30008
+
+3) Create a Jenkins Deployment under jenkins namespace, It should be name as jenkins-deployment , labels app should be jenkins , container name should be jenkins-container , use jenkins image, containerPort should be 8080 and replicas count should be 1.
+
+Make sure to wait for pods to be in running state before clicking on Finish button.
+
+Note: The kubectl utility on jump_host has been configured to work with the kubernetes cluster.
+
+
+kubectl create namespace jenkins
+kubectl get namespaces
+
+
+vi  jenkins-service.yaml
+#Enter the below
+apiVersion: v1
+kind: Service
+metadata:
+  name: jenkins-service
+spec:
+  type: NodePort
+  ports:
+    - port: 8080
+      targetPort: 8080
+      nodePort: 30008
+  selector:
+    app: jenkins
+
+kubectl create -f jenkins-service.yaml --namespace jenkins
+
+
+sudo vi  jenkins-deployment.yaml 
+#Enter the below
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jenkins-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: jenkins
+  template:
+    metadata:
+      labels:
+        app: jenkins
+    spec:
+      containers:
+      - name: jenkins-container
+        image: jenkins/jenkins:lts
+        ports:
+        - containerPort: 8080
+
+
+kubectl create -f jenkins-deployment.yaml --namespace jenkins
+
+kubectl get pods --namespace jenkins
+
+kubectl logs jenkins-deployment-cb9555d6f-kz68l --namespace jenkins
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+name: jenkins-deployment
+ labels:
+  app: jenkins
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: jenkins
+    spec:
+      containers:
+      - name: jenkins-container
+        image: jenkins/jenkins:lts
+        ports:
+        - containerPort: 8080
+
+
+
+
+
+
+
+
+
+
+

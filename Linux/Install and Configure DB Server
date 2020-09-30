@@ -1,0 +1,61 @@
+We recently migrated one of our WordPress websites from an old server to a new infrastructure in Stratos Datacenter. We have already set up LAMP, except for the database. We have also restored website code; however, we need to restore the database to make it work on the new infra. Please perform the below given steps on DB host:
+
+
+a. Install/Configure MariaDB server.
+
+b. Create a database with name kodekloud_db2.
+
+c. There is a DB dump on jump_host under location /home/thor/db.sql. Restore this database in newly created database.
+
+d. Create a user kodekloud_gem and set any password you like.
+
+e. Grant full permissions to user kodekloud_gem on database kodekloud_db2.
+
+f. Update database-related details in /data/wp-config.php file on storage server, which is our NFS server having a share /data mounted on each app server on location /var/www/html. (for more details about how to update WordPress config file please visit https://wordpress.org/support/article/editing-wp-config-php/)
+
+g. You can access the website on LBR link; to do so click on the + button on top of your terminal, select option Select port to view on Host 1, and after adding port 80 click on Display Port.
+
+
+# mysql_secure_installation--> dont use it for this example.
+
+
+sudo scp -rp /home/thor/db.sql  peter@stdb01:/tmp #from Jump host
+yum install openssh-clients -y # if scp command not found
+
+yum install mariadb-server mariadb-client -y;
+sudo systemctl enable mariadb
+sudo systemctl start mariadb
+mysql -V #to check Version
+
+mysql -u root -p
+create database kodekloud_db2;
+CTRL+D to exit the database.
+
+mysql -u root -p kodekloud_db2 < /tmp/db.sql
+USE kodekloud_db2;
+GRANT ALL ON kodekloud_db2.* TO 'kodekloud_gem'@'localhost' IDENTIFIED BY 'password' WITH GRANT OPTION;
+FLUSH PRIVILEGES;
+mysql -u kodekloud_gem -p
+SHOW DATABASES;
+show tables;
+
+#To change the config in WP 
+ssh natasha@stsor01
+vi /data/wp-config.php
+#Changed the below parramater on the ocnfig file
+// ** MySQL settings - You can get this info from your web host ** //
+/** The name of the database for WordPress */
+define( 'DB_NAME', 'kodekloud_db2' );
+/** MySQL database username */
+define( 'DB_USER', 'kodekloud_gem' );
+/** MySQL database password */
+define( 'DB_PASSWORD', 'password' );
+/** MySQL hostname */
+define( 'DB_HOST', 'stdb01' );
+
+#To check in App server the config file.
+cd /var/www/html
+vi wp-config.php
+
+systemctl mariadb restart
+
