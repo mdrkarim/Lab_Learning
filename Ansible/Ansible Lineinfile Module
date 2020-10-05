@@ -10,12 +10,42 @@ Create a file /var/www/html/index.html with content:
 This is a Nautilus sample file, created using Ansible!
 
 Using lineinfile Ansible module add some more content in /var/www/html/index.html file. Below is the content:
-Welcome to Nautilus Group!
+Welcome to xFusionCorp Industries!
 
 Also make sure this new line is added at the top of the file.
 
 The /var/www/html/index.html file's user and group owner should be apache on all app servers.
 
-The /var/www/html/index.html file's permissions should be 0777 on all app servers.
+The /var/www/html/index.html file's permissions should be 0655 on all app servers.
 
 Note: Validation will try to run playbook using command ansible-playbook -i inventory playbook.yml so please make sure playbook works this way, without passing any extra arguments.
+
+cd  /home/thor/ansible && sudo vi playbook.yml
+
+---
+- name: Ansible LIfeLine Module
+  hosts: all
+  become: true
+  become_method: sudo
+  tasks:
+    - name: install httpd*
+      yum: name=httpd state=latest
+    - name: Enable service to start on boot up
+      service:
+        name: httpd
+        state: started
+    - name: Create a file on all App server
+      copy:
+        dest: /var/www/html/index.html
+        content: "This is a Nautilus sample file, created using Ansible!"
+        mode: 0777
+        owner: apache
+        group: apache
+    - name: Ansible lineinfile insertbefore 
+      lineinfile:
+        dest: /var/www/html/index.html
+        line: 'Welcome to xFusionCorp Industries!'
+        insertbefore: 'This'
+
+
+ansible-playbook -i inventory playbook.yml
