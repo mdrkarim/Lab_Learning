@@ -1,0 +1,51 @@
+As a new teammate has joined Nautilus application development team, the application development team has asked the DevOps team to create a new user for the new teammate on all application servers in Stratos Datacenter. The task needs to be performed using Puppet only. You can find more details below about the task.
+
+
+Create a Puppet programming file news.pp under /etc/puppetlabs/code/environments/production/manifests directory on master node i.e Jump Server, and using Puppet user resource add a user on all app servers as mentioned below:
+
+Create a user siva and set its UID to 1752 on all Puppet agent nodes i.e all App Servers.
+Note: Please perform this task using news.pp only, do not create any separate inventory file.
+
+
+
+cd /etc/puppetlabs/code/environments/production/manifests
+vi news.pp
+
+class add_user {
+
+ # add user with uid
+  user { 'siva':
+    ensure     => 'present',
+    managehome => true,
+    uid   => '1752',
+  }
+
+}
+
+node default{}
+
+
+
+ node stapp01.stratos.xfusioncorp.com
+{
+	
+	include add_user
+}
+
+node stapp02.stratos.xfusioncorp.com
+{
+	
+	include add_user
+}
+
+node stapp03.stratos.xfusioncorp.com
+{
+	
+	include add_user
+}
+
+
+ puppet parser validate news.pp
+ puppet apply news.pp --noop
+
+ puppet agent --test

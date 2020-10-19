@@ -29,7 +29,7 @@ stapp03.stratos.xfusioncorp.com
 {include httpdconf}
 
  
- puppet play cluster.pp --noop
+ puppet apply cluster.pp --noop
 
  puppet agent --test
 
