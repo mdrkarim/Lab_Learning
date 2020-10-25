@@ -71,3 +71,20 @@ ls index.html
 docker exec -it mysql_apache bash
 mysql -p database_apache
 curl 172.16.238.12:6300
+
+
+docker run --name db -e POSTGRES_PASSWORD=mysecretpassword -d postgres
+docker run --name wordpress --link db -p 8085:80 -d wordpress
+
+services:
+  db:
+    environment:
+      POSTGRES_PASSWORD: mysecretpassword
+    image: postgres
+  wordpress:
+    image: wordpress
+    links:
+    - db
+    ports:
+    - 8085:80
+version: '3.0'
